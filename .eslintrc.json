@@ -6,6 +6,7 @@
     "no-unused-vars": "warn",
     "func-names": "off",
     "no-process-exit": "off",
+    "no-undef": "warn",
     "object-shorthand": "off",
     "node/no-unsupported-features/es-syntax": [
       "off",
