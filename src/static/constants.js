@@ -28,4 +28,17 @@ const initialOptions = [
   }
 ];
 
-export default { initialOptions };
+const COLOR_PALLETE = [
+  '#c76861',
+  '#e6c11e',
+  '#90de1b',
+  '#1bde97',
+  '#1bc7de',
+  '#1b66de',
+  '#421bde',
+  '#901bde',
+  '#d618d3',
+  '#d6186a'
+];
+
+export default { initialOptions, COLOR_PALLETE };

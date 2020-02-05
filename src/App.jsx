@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StylesProvider } from '@material-ui/core';
 import Dropdown from './components/Dropdown';
 import constants from './static/constants';
@@ -10,7 +10,12 @@ const { initialOptions } = constants;
 const { innerWidth, innerHeight } = window;
 
 function App() {
-  console.log('TCL: this', this);
+  const [currSelection, updateSelection] = useState(null);
+
+  const updateSel = index => {
+    updateSelection(null);
+    setTimeout(() => updateSelection(index), 500);
+  };
 
   return (
     <StylesProvider injectFirst>
@@ -19,11 +24,17 @@ function App() {
           Disulfide bond and Glycoslyation Visualization
         </header>
         <div className="App-dropdown">
-          <Dropdown options={initialOptions} />
+          <Dropdown options={initialOptions} updateSel={updateSel} />
         </div>
-        <div className="App-canvas">Visualization</div>
-        {/* <BarChart width={600} height={500} /> */}
-        <Visualization width={innerWidth} height={innerHeight} />
+        {currSelection != null && Number.isInteger(currSelection) ? (
+          <Visualization
+            width={innerWidth}
+            height={innerHeight}
+            currSelection={currSelection}
+          />
+        ) : (
+          <div className="App-canvas" />
+        )}
       </div>
     </StylesProvider>
   );

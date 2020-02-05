@@ -10,7 +10,7 @@ import './index.scss';
  * Drop down menu to select protein to visualize.
  */
 const Dropdown = props => {
-  const { options } = props;
+  const { options, updateSel } = props;
   const inputLabel = useRef(null);
   const [val, setValue] = useState('');
 
@@ -19,6 +19,7 @@ const Dropdown = props => {
       target: { value: newVal }
     } = event;
     setValue(newVal);
+    updateSel(newVal);
   };
 
   const generateMenuItems = opts => {
@@ -29,10 +30,10 @@ const Dropdown = props => {
       </MenuItem>
     );
 
-    opts.forEach(opt => {
+    opts.forEach((opt, idx) => {
       const { value, label } = opt;
       const mItem = (
-        <MenuItem value={value} key={`key${value}`}>
+        <MenuItem value={idx} key={`key${value}`}>
           {label}
         </MenuItem>
       );
@@ -62,7 +63,8 @@ const Dropdown = props => {
 };
 
 Dropdown.propTypes = {
-  options: PropTypes.arrayOf(PropTypes.object).isRequired
+  options: PropTypes.arrayOf(PropTypes.object).isRequired,
+  updateSel: PropTypes.func.isRequired
 };
 
 export default Dropdown;
