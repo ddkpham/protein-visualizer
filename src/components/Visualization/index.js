@@ -11,9 +11,10 @@ import {
 } from 'd3';
 import PropTypes from 'prop-types';
 import constants from '../../static/constants';
+import './index.scss';
 
 const CIRCLE_RADIUS = 5;
-const SPINE_HEIGHT = 40;
+const SPINE_HEIGHT = 30;
 
 const { initialOptions, COLOR_PALLETE } = constants;
 
@@ -89,7 +90,7 @@ function Visualization(props) {
       const atom = g.append('text');
       atom
         .attr('dx', xScale(el) - 5)
-        .attr('dy', SULFIDE_POS + 12)
+        .attr('dy', SULFIDE_POS + 5)
         .text(() => 'N');
 
       const stem = g.append('line');
@@ -162,7 +163,6 @@ function Visualization(props) {
       });
       return bondPos;
     });
-    console.log('TCL: Visualization -> bonds', bonds);
 
     bonds.forEach((pair, idx) => {
       const [x, y] = pair;
@@ -177,9 +177,10 @@ function Visualization(props) {
 
         const text = g.append('text');
         text
-          .attr('dx', xScale(el) - 15)
+          .attr('dx', xScale(el) - 10)
           .attr('dy', SULFIDE_POS + 20)
-          .text(() => el);
+          .text(() => el)
+          .attr('class', 'sulfide-labels');
 
         const bond = g.append('line');
         bond
@@ -215,6 +216,13 @@ function Visualization(props) {
       .style('stroke', 'black');
   };
 
+  const attachNTerminus = g => {
+    const NTerm = g.append('text');
+    NTerm.attr('dx', xScale(0) - 2)
+      .attr('dy', innerHeight / 2 + 25)
+      .text(() => 'NH2--');
+  };
+
   useEffect(() => {
     const svg = select('#svg');
     svg.style('background-color', 'white');
@@ -224,17 +232,8 @@ function Visualization(props) {
     attachSpine(g);
     attachSulfides(g);
     attachGlycoBonds(g);
+    attachNTerminus(g);
   }, [svgRef.current]);
-
-  useEffect(() => {
-    if (mounted) {
-      selectAll('svg > *').remove();
-    }
-  }, [currSelection]);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const svg = Number.isInteger(currSelection) ? (
     <svg height={`${height}`} width={`${width}`} ref={svgRef} id="svg">
