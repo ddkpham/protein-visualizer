@@ -11,12 +11,17 @@ import {
 import PropTypes from 'prop-types';
 import constants from '../../static/constants';
 import Legend from '../Legend';
+import parser from '../../parser';
+
 import './index.scss';
+
+// const { proteinsData: initialOptions } = parser;
 
 const CIRCLE_RADIUS = 5;
 const SPINE_HEIGHT = 30;
 
-const { initialOptions, COLOR_PALLETE } = constants;
+const { COLOR_PALLETE } = constants;
+// console.log('TCL: initialOptions', initialOptions);
 
 const calculateBondRanking = array => {
   const pairRanking = [];
@@ -43,7 +48,7 @@ const calculateBondRanking = array => {
 };
 
 function Visualization(props) {
-  const { height, width, currSelection, isLegendOpen } = props;
+  const { height, width, currSelection, isLegendOpen, initialOptions } = props;
   const svgRef = useRef(null);
   const [showGlyco, setShowGlyco] = useState(true);
   const [showDisulfide, setShowDisulfide] = useState(true);
@@ -74,10 +79,11 @@ function Visualization(props) {
 
   const GLYCO_STEM_LENGTH = 60;
   const GLYCO_LINK_LENGTH = 10;
+  const SPINE_START_POS = 0.5 * margin.left;
 
   const xScale = scaleLinear()
     .domain([0, initialOptions[currSelection].length])
-    .range([0, innerWidth]);
+    .range([SPINE_START_POS, innerWidth + SPINE_START_POS]);
 
   const bondHeight = idx => {
     const bHeight = SULFIDE_POS + SULFIDE_BOND_LENGTH * pairRanking[idx];
@@ -218,9 +224,9 @@ function Visualization(props) {
   const attachSpine = g => {
     const spineBase = g.append('rect');
     spineBase
-      .attr('width', innerWidth - 2 * margin.left)
+      .attr('width', innerWidth)
       .attr('height', SPINE_HEIGHT)
-      .attr('x', margin.left)
+      .attr('x', SPINE_START_POS)
       .attr('y', innerHeight / 2)
       .style('fill', 'white')
       .style('stroke', 'black');
@@ -228,7 +234,7 @@ function Visualization(props) {
 
   const attachNTerminus = g => {
     const NTerm = g.append('text');
-    NTerm.attr('dx', margin.left - 50)
+    NTerm.attr('dx', SPINE_START_POS - 50)
       .attr('dy', innerHeight / 2 + 20)
       .text(() => 'NH2--');
   };
@@ -284,6 +290,7 @@ function Visualization(props) {
 
 Visualization.propTypes = {
   isLegendOpen: PropTypes.bool,
+  initialOptions: PropTypes.arrayOf(PropTypes.object).isRequired,
   height: PropTypes.number,
   width: PropTypes.number,
   currSelection: PropTypes.number.isRequired

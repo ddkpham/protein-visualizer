@@ -11,6 +11,7 @@ import './index.scss';
  */
 const Dropdown = props => {
   const { options, updateSel } = props;
+  console.log('TCL: options', options);
   const inputLabel = useRef(null);
   const [val, setValue] = useState('');
 
