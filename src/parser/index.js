@@ -1,10 +1,6 @@
-// var fs = require('fs');
+import { csv } from 'd3';
 
-// const parser = filename => {
-//   console.log('parssssingggg');
-//   fs.readFile(filename, function(err, buf) {
-//     console.log(buf.toString());
-//   });
-// };
-
-// export default parser;
+async function getData() {
+  const data = await csv(csvData);
+  return data;
+}

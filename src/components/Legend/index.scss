@@ -1,0 +1,30 @@
+.legend {
+  &--wrapper {
+    position: fixed;
+    top: 100px;
+    left: 30px;
+    width: 250px;
+  }
+
+  &--menuItem {
+    display: flex;
+  }
+}
+
+.button-visibility--off {
+  position: relative;
+  bottom: 11px;
+  left: 10px;
+  .MuiIconButton-root {
+    color: #cb2d39;
+  }
+}
+
+.button-visibility--on {
+  position: relative;
+  bottom: 11px;
+  left: 10px;
+  .MuiIconButton-root {
+    color: #004d00;
+  }
+}

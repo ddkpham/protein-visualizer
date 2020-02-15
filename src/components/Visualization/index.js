@@ -3,14 +3,14 @@ import {
   select,
   csv,
   scaleLinear,
-  selectAll,
-  max,
   scaleBand,
   axisLeft,
-  axisBottom
+  axisBottom,
+  selectAll
 } from 'd3';
 import PropTypes from 'prop-types';
 import constants from '../../static/constants';
+import Legend from '../Legend';
 import './index.scss';
 
 const CIRCLE_RADIUS = 5;
@@ -43,9 +43,11 @@ const calculateBondRanking = array => {
 };
 
 function Visualization(props) {
-  const { height, width, currSelection } = props;
+  const { height, width, currSelection, isLegendOpen } = props;
   const svgRef = useRef(null);
-  const [mounted, setMounted] = useState(false);
+  const [showGlyco, setShowGlyco] = useState(true);
+  const [showDisulfide, setShowDisulfide] = useState(true);
+  const { disulfideBonds, glycoslation } = initialOptions[currSelection];
 
   const glycoBonds = initialOptions[currSelection].disulfideBonds.map(pair => {
     const bondPos = [];
@@ -91,7 +93,15 @@ function Visualization(props) {
       atom
         .attr('dx', xScale(el) - 5)
         .attr('dy', SULFIDE_POS + 5)
-        .text(() => 'N');
+        .text(() => `N`)
+        .attr('class', 'glyco-labels');
+
+      const pos = g.append('text');
+      pos
+        .attr('dx', xScale(el) + 3)
+        .attr('dy', SULFIDE_POS + 7)
+        .text(() => `${el}`)
+        .attr('class', 'glyco-labels--pos');
 
       const stem = g.append('line');
       stem
@@ -175,13 +185,6 @@ function Visualization(props) {
           .style('stroke', 'black')
           .style('fill', COLOR_PALLETE[idx % COLOR_PALLETE.length]);
 
-        const text = g.append('text');
-        text
-          .attr('dx', xScale(el) - 10)
-          .attr('dy', SULFIDE_POS + 20)
-          .text(() => el)
-          .attr('class', 'sulfide-labels');
-
         const bond = g.append('line');
         bond
           .attr('x1', xScale(el))
@@ -194,6 +197,13 @@ function Visualization(props) {
           .attr('dx', xScale(el) - 5)
           .attr('dy', bondHeight(idx) + SULFIDE_ATOM_OFFSET)
           .text(() => 'S');
+
+        const pos = g.append('text');
+        pos
+          .attr('dx', xScale(el) + 4)
+          .attr('dy', bondHeight(idx) + SULFIDE_ATOM_OFFSET + 5)
+          .text(() => `${el}`)
+          .attr('class', 'sulfide-labels--pos');
       });
       const link = g.append('line');
       link
@@ -218,22 +228,38 @@ function Visualization(props) {
 
   const attachNTerminus = g => {
     const NTerm = g.append('text');
-    NTerm.attr('dx', xScale(0) - 2)
-      .attr('dy', innerHeight / 2 + 25)
+    NTerm.attr('dx', margin.left - 50)
+      .attr('dy', innerHeight / 2 + 20)
       .text(() => 'NH2--');
   };
 
-  useEffect(() => {
+  const renderVisualization = () => {
     const svg = select('#svg');
     svg.style('background-color', 'white');
 
     const g = svg.append('g');
     g.attr('transform', `translate(${margin.left}, ${margin.top})`);
     attachSpine(g);
-    attachSulfides(g);
-    attachGlycoBonds(g);
+    if (showDisulfide) {
+      attachSulfides(g);
+    }
+    if (showGlyco) {
+      attachGlycoBonds(g);
+    }
     attachNTerminus(g);
-  }, [svgRef.current]);
+  };
+  const removeElements = () => {
+    const svgEls = ['text', 'line', 'circle', 'rect'];
+    svgEls.forEach(el => {
+      const allNodes = selectAll(el);
+      allNodes.remove();
+    });
+  };
+
+  useEffect(() => {
+    removeElements();
+    renderVisualization();
+  }, [svgRef.current, showDisulfide, showGlyco]);
 
   const svg = Number.isInteger(currSelection) ? (
     <svg height={`${height}`} width={`${width}`} ref={svgRef} id="svg">
@@ -241,16 +267,30 @@ function Visualization(props) {
     </svg>
   ) : null;
 
-  return <div>{svg}</div>;
+  return (
+    <div>
+      {isLegendOpen ? (
+        <Legend
+          glycoslation={glycoslation}
+          disulfideBonds={disulfideBonds}
+          toggleGlyco={setShowGlyco}
+          toggleSulfide={setShowDisulfide}
+        />
+      ) : null}
+      {svg}
+    </div>
+  );
 }
 
 Visualization.propTypes = {
+  isLegendOpen: PropTypes.bool,
   height: PropTypes.number,
   width: PropTypes.number,
   currSelection: PropTypes.number.isRequired
 };
 
 Visualization.defaultProps = {
+  isLegendOpen: false,
   height: 500,
   width: 500
 };
