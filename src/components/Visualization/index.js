@@ -20,6 +20,19 @@ const SPINE_HEIGHT = 30;
 
 const { COLOR_PALLETE } = constants;
 
+const scaleMap = {
+  1: 1,
+  2: 2.5,
+  3: 2,
+  4: 1.9,
+  5: 2,
+  6: 2.2,
+  7: 2.5,
+  8: 2.9,
+  9: 3.6,
+  10: 4.6
+};
+
 const calculateBondRanking = array => {
   const pairRanking = [];
   array.forEach((pair, idx) => {
@@ -51,9 +64,11 @@ function Visualization(props) {
     currSelection,
     isLegendOpen,
     initialOptions,
-    scaleVisualization
+    scaleVisualization: test,
+    scaleFactor
   } = props;
-  const SCALE_FACTOR = scaleVisualization ? 2 : 1;
+  const scaleVisualization = scaleFactor !== 1;
+  const SCALE_FACTOR = scaleVisualization ? scaleFactor : 1;
   const width = initialWidth * SCALE_FACTOR;
   const svgRef = useRef(null);
   const [showGlyco, setShowGlyco] = useState(true);
@@ -91,16 +106,10 @@ function Visualization(props) {
   const SPINE_WIDTH = scaleVisualization
     ? innerWidth + SPINE_START_POS
     : innerWidth + SPINE_START_POS;
-  console.log('TCL: Visualization -> SPINE_WIDTH', SPINE_WIDTH);
 
   const xScale = scaleLinear()
     .domain([0, initialOptions[currSelection].length])
     .range([SCALE_FACTOR * SPINE_START_POS, SPINE_WIDTH]);
-
-  console.log(
-    'TCL: Visualization -> SCALE_FACTOR * SPINE_START_POS',
-    SCALE_FACTOR * SPINE_START_POS
-  );
 
   const bondHeight = idx => {
     const bHeight = SULFIDE_POS + SULFIDE_BOND_LENGTH * pairRanking[idx];
@@ -286,16 +295,23 @@ function Visualization(props) {
     removeElements();
     renderVisualization();
     if (scaleVisualization) {
-      document.getElementById('svg').style.marginLeft = innerWidth / 2;
+      document.getElementById('svg').style.marginLeft =
+        innerWidth / scaleMap[scaleFactor];
     } else {
       document.getElementById('svg').style.marginLeft = 0;
     }
-  }, [svgRef.current, showDisulfide, showGlyco, scaleVisualization]);
+  }, [
+    svgRef.current,
+    showDisulfide,
+    showGlyco,
+    scaleVisualization,
+    scaleFactor
+  ]);
 
   const svg = Number.isInteger(currSelection) ? (
     <svg
       height={`${height}`}
-      width={`${width}`}
+      width={`${width + margin.left}`}
       ref={svgRef}
       id="svg"
       overflow="visible"
@@ -312,6 +328,7 @@ function Visualization(props) {
           disulfideBonds={disulfideBonds}
           toggleGlyco={setShowGlyco}
           toggleSulfide={setShowDisulfide}
+          length={initialOptions[currSelection].length}
         />
       ) : null}
       {svg}
@@ -325,12 +342,14 @@ Visualization.propTypes = {
   height: PropTypes.number,
   width: PropTypes.number,
   currSelection: PropTypes.number.isRequired,
-  scaleVisualization: PropTypes.bool
+  scaleVisualization: PropTypes.bool,
+  scaleFactor: PropTypes.number
 };
 
 Visualization.defaultProps = {
   isLegendOpen: false,
   scaleVisualization: false,
+  scaleFactor: 1,
   height: 500,
   width: 500
 };

@@ -32,7 +32,13 @@ const useStyles = makeStyles({
 });
 
 function Legend(props) {
-  const { glycoslation, disulfideBonds, toggleGlyco, toggleSulfide } = props;
+  const {
+    glycoslation,
+    disulfideBonds,
+    toggleGlyco,
+    toggleSulfide,
+    length
+  } = props;
   const [showGlyco, setShowGlyco] = useState(true);
   const [showSulfide, setShowSulfide] = useState(true);
   const classes = useStyles();
@@ -85,6 +91,12 @@ function Legend(props) {
               <VisibilityIcon />
             </IconButton>
           </div>
+        </div>
+        <div className="legend--menuItem">
+          <Typography>
+            Total Protein Length:
+            {length}
+          </Typography>
         </div>
       </CardContent>
     </Card>

@@ -18,10 +18,16 @@ function App() {
   const [scaleVisualization, setScaleVisualization] = useState(false);
   const [isLegendOpen, setLegendState] = useState(true);
   const [proteinOpts, setProteinOpts] = useState([]);
+  const [scaleFactor, setScaleFactor] = useState(1);
+  console.log('TCL: App -> scaleFactor', scaleFactor);
 
   useEffect(() => {
     getProteins().then(proteins => setProteinOpts(proteins));
   }, []);
+
+  const updateScaleFactor = val => {
+    setScaleFactor(val);
+  };
 
   const toggleScaling = () => {
     setScaleVisualization(!scaleVisualization);
@@ -42,6 +48,7 @@ function App() {
         <CustomAppBar
           toggleLegend={toggleLegend}
           scaleVisualization={toggleScaling}
+          setScaleFactor={updateScaleFactor}
         />
         <div className="App-dropdown">
           {proteinOpts.length ? (
@@ -56,6 +63,7 @@ function App() {
             isLegendOpen={isLegendOpen}
             initialOptions={proteinOpts}
             scaleVisualization={scaleVisualization}
+            scaleFactor={scaleFactor}
           />
         ) : (
           <div className="App-canvas" />
