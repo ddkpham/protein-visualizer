@@ -1,11 +1,11 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "0af2e17950985785fc3e49b23748ff04",
+    "revision": "73d002841c551c085cca44e25b22a8f6",
     "url": "/protein-visualizer/index.html"
   },
   {
-    "revision": "527072e4b168e26da3ba",
-    "url": "/protein-visualizer/static/css/main.c7cacc15.chunk.css"
+    "revision": "0db668c59f6dd7a78ce3",
+    "url": "/protein-visualizer/static/css/main.ed16be6e.chunk.css"
   },
   {
     "revision": "c50096ac79fcaf6db69e",
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/protein-visualizer/static/js/2.3937a263.chunk.js.LICENSE"
   },
   {
-    "revision": "527072e4b168e26da3ba",
-    "url": "/protein-visualizer/static/js/main.c2713825.chunk.js"
+    "revision": "0db668c59f6dd7a78ce3",
+    "url": "/protein-visualizer/static/js/main.a85d8234.chunk.js"
   },
   {
     "revision": "f6f3c4ec18a6ab0c5cbf",
