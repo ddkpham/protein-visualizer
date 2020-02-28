@@ -9,8 +9,10 @@ import {
 } from '@material-ui/core';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuIcon from '@material-ui/icons/Menu';
+import LinearScaleIcon from '@material-ui/icons/LinearScale';
 import { makeStyles } from '@material-ui/core/styles';
 import './index.scss';
+import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -25,7 +27,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function CustomAppBar(props) {
-  const { toggleLegend } = props;
+  const { toggleLegend, scaleVisualization } = props;
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -49,6 +51,15 @@ function CustomAppBar(props) {
           onClick={toggleLegend}
         >
           <MenuIcon />
+        </IconButton>
+        <IconButton
+          edge="start"
+          className={classes.menuButton}
+          color="inherit"
+          aria-label="menu"
+          onClick={scaleVisualization}
+        >
+          <LinearScaleIcon />
         </IconButton>
         <Typography variant="h6" className={classes.title}>
           Sun Lab
@@ -86,5 +97,14 @@ function CustomAppBar(props) {
     </AppBar>
   );
 }
+
+CustomAppBar.propTypes = {
+  toggleLegend: PropTypes.bool.isRequired,
+  scaleVisualization: PropTypes.func
+};
+
+CustomAppBar.defaultProps = {
+  scaleVisualization: () => {}
+};
 
 export default CustomAppBar;

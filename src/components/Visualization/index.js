@@ -15,13 +15,10 @@ import parser from '../../parser';
 
 import './index.scss';
 
-// const { proteinsData: initialOptions } = parser;
-
 const CIRCLE_RADIUS = 5;
 const SPINE_HEIGHT = 30;
 
 const { COLOR_PALLETE } = constants;
-// console.log('TCL: initialOptions', initialOptions);
 
 const calculateBondRanking = array => {
   const pairRanking = [];
@@ -35,10 +32,10 @@ const calculateBondRanking = array => {
           total += 1;
         }
         if (low < currLow && high > currLow && high < currHigh) {
-          total += 0.5;
+          total += 0.7;
         }
         if (low > currLow && low < currHigh && high > currHigh) {
-          total += 0.5;
+          total += 0.75;
         }
       }
     }
@@ -48,10 +45,20 @@ const calculateBondRanking = array => {
 };
 
 function Visualization(props) {
-  const { height, width, currSelection, isLegendOpen, initialOptions } = props;
+  const {
+    height,
+    width: initialWidth,
+    currSelection,
+    isLegendOpen,
+    initialOptions,
+    scaleVisualization
+  } = props;
+  const SCALE_FACTOR = scaleVisualization ? 2 : 1;
+  const width = initialWidth * SCALE_FACTOR;
   const svgRef = useRef(null);
   const [showGlyco, setShowGlyco] = useState(true);
   const [showDisulfide, setShowDisulfide] = useState(true);
+  const [showScale, setShowScale] = useState(false);
   const { disulfideBonds, glycoslation } = initialOptions[currSelection];
 
   const glycoBonds = initialOptions[currSelection].disulfideBonds.map(pair => {
@@ -81,9 +88,19 @@ function Visualization(props) {
   const GLYCO_LINK_LENGTH = 10;
   const SPINE_START_POS = 0.5 * margin.left;
 
+  const SPINE_WIDTH = scaleVisualization
+    ? innerWidth + SPINE_START_POS
+    : innerWidth + SPINE_START_POS;
+  console.log('TCL: Visualization -> SPINE_WIDTH', SPINE_WIDTH);
+
   const xScale = scaleLinear()
     .domain([0, initialOptions[currSelection].length])
-    .range([SPINE_START_POS, innerWidth + SPINE_START_POS]);
+    .range([SCALE_FACTOR * SPINE_START_POS, SPINE_WIDTH]);
+
+  console.log(
+    'TCL: Visualization -> SCALE_FACTOR * SPINE_START_POS',
+    SCALE_FACTOR * SPINE_START_POS
+  );
 
   const bondHeight = idx => {
     const bHeight = SULFIDE_POS + SULFIDE_BOND_LENGTH * pairRanking[idx];
@@ -96,6 +113,7 @@ function Visualization(props) {
     const gBonds = glycoslation.map(el => parseInt(el, 10));
     gBonds.forEach(el => {
       const atom = g.append('text');
+
       atom
         .attr('dx', xScale(el) - 5)
         .attr('dy', SULFIDE_POS + 5)
@@ -191,6 +209,8 @@ function Visualization(props) {
           .style('stroke', 'black')
           .style('fill', COLOR_PALLETE[idx % COLOR_PALLETE.length]);
 
+        console.log('TCL: idx -> xScale(el)', idx, xScale(el));
+
         const bond = g.append('line');
         bond
           .attr('x1', xScale(el))
@@ -226,7 +246,7 @@ function Visualization(props) {
     spineBase
       .attr('width', innerWidth)
       .attr('height', SPINE_HEIGHT)
-      .attr('x', SPINE_START_POS)
+      .attr('x', SCALE_FACTOR * SPINE_START_POS)
       .attr('y', innerHeight / 2)
       .style('fill', 'white')
       .style('stroke', 'black');
@@ -234,7 +254,7 @@ function Visualization(props) {
 
   const attachNTerminus = g => {
     const NTerm = g.append('text');
-    NTerm.attr('dx', SPINE_START_POS - 50)
+    NTerm.attr('dx', SCALE_FACTOR * SPINE_START_POS - 50)
       .attr('dy', innerHeight / 2 + 20)
       .text(() => 'NH2--');
   };
@@ -265,16 +285,27 @@ function Visualization(props) {
   useEffect(() => {
     removeElements();
     renderVisualization();
-  }, [svgRef.current, showDisulfide, showGlyco]);
+    if (scaleVisualization) {
+      document.getElementById('svg').style.marginLeft = innerWidth / 2;
+    } else {
+      document.getElementById('svg').style.marginLeft = 0;
+    }
+  }, [svgRef.current, showDisulfide, showGlyco, scaleVisualization]);
 
   const svg = Number.isInteger(currSelection) ? (
-    <svg height={`${height}`} width={`${width}`} ref={svgRef} id="svg">
+    <svg
+      height={`${height}`}
+      width={`${width}`}
+      ref={svgRef}
+      id="svg"
+      overflow="visible"
+    >
       <rect />
     </svg>
   ) : null;
 
   return (
-    <div>
+    <div className="svg-wrapper">
       {isLegendOpen ? (
         <Legend
           glycoslation={glycoslation}
@@ -293,11 +324,13 @@ Visualization.propTypes = {
   initialOptions: PropTypes.arrayOf(PropTypes.object).isRequired,
   height: PropTypes.number,
   width: PropTypes.number,
-  currSelection: PropTypes.number.isRequired
+  currSelection: PropTypes.number.isRequired,
+  scaleVisualization: PropTypes.bool
 };
 
 Visualization.defaultProps = {
   isLegendOpen: false,
+  scaleVisualization: false,
   height: 500,
   width: 500
 };

@@ -15,11 +15,17 @@ const { innerWidth, innerHeight } = window;
 
 function App() {
   const [currSelection, updateSelection] = useState(null);
+  const [scaleVisualization, setScaleVisualization] = useState(false);
   const [isLegendOpen, setLegendState] = useState(true);
   const [proteinOpts, setProteinOpts] = useState([]);
+
   useEffect(() => {
     getProteins().then(proteins => setProteinOpts(proteins));
   }, []);
+
+  const toggleScaling = () => {
+    setScaleVisualization(!scaleVisualization);
+  };
 
   const updateSel = index => {
     updateSelection(null);
@@ -33,7 +39,10 @@ function App() {
   return (
     <StylesProvider injectFirst>
       <div className="App">
-        <CustomAppBar toggleLegend={toggleLegend} />
+        <CustomAppBar
+          toggleLegend={toggleLegend}
+          scaleVisualization={toggleScaling}
+        />
         <div className="App-dropdown">
           {proteinOpts.length ? (
             <Dropdown options={proteinOpts} updateSel={updateSel} />
@@ -46,6 +55,7 @@ function App() {
             currSelection={currSelection}
             isLegendOpen={isLegendOpen}
             initialOptions={proteinOpts}
+            scaleVisualization={scaleVisualization}
           />
         ) : (
           <div className="App-canvas" />
