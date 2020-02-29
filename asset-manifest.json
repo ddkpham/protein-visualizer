@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/protein-visualizer/static/css/main.ed16be6e.chunk.css",
-    "main.js": "/protein-visualizer/static/js/main.a85d8234.chunk.js",
-    "main.js.map": "/protein-visualizer/static/js/main.a85d8234.chunk.js.map",
+    "main.js": "/protein-visualizer/static/js/main.ba64cb5c.chunk.js",
+    "main.js.map": "/protein-visualizer/static/js/main.ba64cb5c.chunk.js.map",
     "runtime-main.js": "/protein-visualizer/static/js/runtime-main.80b41bf1.js",
     "runtime-main.js.map": "/protein-visualizer/static/js/runtime-main.80b41bf1.js.map",
     "static/js/2.3937a263.chunk.js": "/protein-visualizer/static/js/2.3937a263.chunk.js",
     "static/js/2.3937a263.chunk.js.map": "/protein-visualizer/static/js/2.3937a263.chunk.js.map",
     "index.html": "/protein-visualizer/index.html",
-    "precache-manifest.7f1c0d053e90c5b46628caec9f448241.js": "/protein-visualizer/precache-manifest.7f1c0d053e90c5b46628caec9f448241.js",
+    "precache-manifest.9ade10e3adfe531b5d9b8be4069b770c.js": "/protein-visualizer/precache-manifest.9ade10e3adfe531b5d9b8be4069b770c.js",
     "service-worker.js": "/protein-visualizer/service-worker.js",
     "static/css/main.ed16be6e.chunk.css.map": "/protein-visualizer/static/css/main.ed16be6e.chunk.css.map",
     "static/js/2.3937a263.chunk.js.LICENSE": "/protein-visualizer/static/js/2.3937a263.chunk.js.LICENSE",
@@ -18,6 +18,6 @@
     "static/js/runtime-main.80b41bf1.js",
     "static/js/2.3937a263.chunk.js",
     "static/css/main.ed16be6e.chunk.css",
-    "static/js/main.a85d8234.chunk.js"
+    "static/js/main.ba64cb5c.chunk.js"
   ]
 }
