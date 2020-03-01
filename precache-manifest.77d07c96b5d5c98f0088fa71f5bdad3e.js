@@ -1,23 +1,23 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "ac34171b4b30c98d6c6016837d72ccfb",
+    "revision": "2a67a772f6710d5b1e2b77e53673833c",
     "url": "/protein-visualizer/index.html"
   },
   {
-    "revision": "3afad7b29ede2952fdd1",
+    "revision": "56bac90dede41350cdd6",
     "url": "/protein-visualizer/static/css/main.ed16be6e.chunk.css"
   },
   {
-    "revision": "c50096ac79fcaf6db69e",
-    "url": "/protein-visualizer/static/js/2.3937a263.chunk.js"
+    "revision": "be1fb6a31806d58f4204",
+    "url": "/protein-visualizer/static/js/2.dfc3c96b.chunk.js"
   },
   {
-    "revision": "e2fc3609d47d90b8cc004bfe15ddf15e",
-    "url": "/protein-visualizer/static/js/2.3937a263.chunk.js.LICENSE"
+    "revision": "b9bc2fc7725df2ce4b7409c91212bc51",
+    "url": "/protein-visualizer/static/js/2.dfc3c96b.chunk.js.LICENSE"
   },
   {
-    "revision": "3afad7b29ede2952fdd1",
-    "url": "/protein-visualizer/static/js/main.ba64cb5c.chunk.js"
+    "revision": "56bac90dede41350cdd6",
+    "url": "/protein-visualizer/static/js/main.6dcec6e7.chunk.js"
   },
   {
     "revision": "f6f3c4ec18a6ab0c5cbf",
