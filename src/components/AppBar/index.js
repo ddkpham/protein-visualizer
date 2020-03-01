@@ -5,12 +5,14 @@ import {
   Typography,
   IconButton,
   Menu,
-  Toolbar
+  Toolbar,
+  Tooltip
 } from '@material-ui/core';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuIcon from '@material-ui/icons/Menu';
 import LinearScaleIcon from '@material-ui/icons/LinearScale';
 import { makeStyles } from '@material-ui/core/styles';
+import AspectRatioIcon from '@material-ui/icons/AspectRatio';
 import Slider from '@material-ui/core/Slider';
 import './index.scss';
 import PropTypes from 'prop-types';
@@ -28,7 +30,14 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function CustomAppBar(props) {
-  const { toggleLegend, scaleVisualization, setScaleFactor } = props;
+  const {
+    toggleLegend,
+    scaleVisualization,
+    setScaleFactor,
+    toggleFullScale,
+    disableFullScale,
+    fullScale
+  } = props;
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -46,34 +55,55 @@ function CustomAppBar(props) {
     return `${val}x`;
   };
 
+  const updateFullScale = () => {
+    toggleFullScale();
+  };
+
   return (
     <AppBar>
       <Toolbar>
-        <IconButton
-          edge="start"
-          className={classes.menuButton}
-          color="inherit"
-          aria-label="menu"
-          onClick={toggleLegend}
-        >
-          <MenuIcon />
-        </IconButton>
+        <Tooltip title="Toggle Legend">
+          <IconButton
+            edge="start"
+            className={classes.menuButton}
+            color="inherit"
+            aria-label="menu"
+            onClick={toggleLegend}
+          >
+            <MenuIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Turn off Scaling (Proteins must have min 3000 length)">
+          <IconButton
+            edge="start"
+            className={classes.menuButton}
+            color="inherit"
+            aria-label="scale"
+            onClick={updateFullScale}
+            disabled={disableFullScale}
+          >
+            <AspectRatioIcon />
+          </IconButton>
+        </Tooltip>
         <Typography variant="h6" className={classes.title}>
           Sun Lab
         </Typography>
         <div>
-          <IconButton
-            aria-label="account of current user"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-            onClick={evt => {
-              handleMenu(evt);
-              scaleVisualization();
-            }}
-            color="inherit"
-          >
-            <LinearScaleIcon />
-          </IconButton>
+          <Tooltip title="Increase Scaling Ratio">
+            <IconButton
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              disabled={fullScale}
+              onClick={evt => {
+                handleMenu(evt);
+                scaleVisualization();
+              }}
+              color="inherit"
+            >
+              <LinearScaleIcon />
+            </IconButton>
+          </Tooltip>
           <Menu
             id="menu-appbar"
             anchorEl={anchorEl}
@@ -109,7 +139,7 @@ function CustomAppBar(props) {
                 step={1}
                 marks
                 min={1}
-                max={10}
+                max={15}
               />
             </MenuItem>
           </Menu>
@@ -121,11 +151,13 @@ function CustomAppBar(props) {
 
 CustomAppBar.propTypes = {
   toggleLegend: PropTypes.bool.isRequired,
-  scaleVisualization: PropTypes.func
+  scaleVisualization: PropTypes.func,
+  setScaleFactor: PropTypes.func
 };
 
 CustomAppBar.defaultProps = {
-  scaleVisualization: () => {}
+  scaleVisualization: () => {},
+  setScaleFactor: () => {}
 };
 
 export default CustomAppBar;

@@ -19,7 +19,9 @@ function App() {
   const [isLegendOpen, setLegendState] = useState(true);
   const [proteinOpts, setProteinOpts] = useState([]);
   const [scaleFactor, setScaleFactor] = useState(1);
-  console.log('TCL: App -> scaleFactor', scaleFactor);
+  const [fullScale, setFullScale] = useState(false);
+  const [fullScaleDisabled, setFullScaleDisabled] = useState(true);
+  console.log('TCL: App -> fullScaleDisabled', fullScaleDisabled);
 
   useEffect(() => {
     getProteins().then(proteins => setProteinOpts(proteins));
@@ -42,6 +44,10 @@ function App() {
     setLegendState(!isLegendOpen);
   };
 
+  const toggleFullScale = () => {
+    setFullScale(!fullScale);
+  };
+
   return (
     <StylesProvider injectFirst>
       <div className="App">
@@ -49,6 +55,9 @@ function App() {
           toggleLegend={toggleLegend}
           scaleVisualization={toggleScaling}
           setScaleFactor={updateScaleFactor}
+          toggleFullScale={toggleFullScale}
+          disableFullScale={fullScaleDisabled}
+          fullScale={fullScale}
         />
         <div className="App-dropdown">
           {proteinOpts.length ? (
@@ -64,6 +73,8 @@ function App() {
             initialOptions={proteinOpts}
             scaleVisualization={scaleVisualization}
             scaleFactor={scaleFactor}
+            fullScale={fullScale}
+            setFullScaleDisabled={setFullScaleDisabled}
           />
         ) : (
           <div className="App-canvas" />

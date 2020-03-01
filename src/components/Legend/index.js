@@ -66,7 +66,9 @@ function Legend(props) {
         <div className="legend--menuItem">
           <Typography>
             Total Glyco Bonds:
-            {glycoslation.length}
+            <Typography display="inline" classes={{ root: 'bold-text' }}>
+              {glycoslation.length}
+            </Typography>
           </Typography>
           <div className={`button-visibility${showGlyco ? '--on' : '--off'}`}>
             <IconButton
@@ -81,7 +83,9 @@ function Legend(props) {
         <div className="legend--menuItem">
           <Typography>
             Total Sulfide Bonds:
-            {disulfideBonds.length}
+            <Typography display="inline" classes={{ root: 'bold-text' }}>
+              {disulfideBonds.length}
+            </Typography>
           </Typography>
           <div className={`button-visibility${showSulfide ? '--on' : '--off'}`}>
             <IconButton
@@ -95,7 +99,9 @@ function Legend(props) {
         <div className="legend--menuItem">
           <Typography>
             Total Protein Length:
-            {length}
+            <Typography display="inline" classes={{ root: 'bold-text' }}>
+              {length}
+            </Typography>
           </Typography>
         </div>
       </CardContent>

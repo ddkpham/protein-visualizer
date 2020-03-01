@@ -30,7 +30,12 @@ const scaleMap = {
   7: 2.5,
   8: 2.9,
   9: 3.6,
-  10: 4.6
+  10: 4.6,
+  11: 6.8,
+  12: 12,
+  13: 59,
+  14: -15,
+  15: -7
 };
 
 const calculateBondRanking = array => {
@@ -65,7 +70,9 @@ function Visualization(props) {
     isLegendOpen,
     initialOptions,
     scaleVisualization: test,
-    scaleFactor
+    scaleFactor,
+    fullScale,
+    setFullScaleDisabled
   } = props;
   const scaleVisualization = scaleFactor !== 1;
   const SCALE_FACTOR = scaleVisualization ? scaleFactor : 1;
@@ -85,6 +92,12 @@ function Visualization(props) {
     });
     return bondPos;
   });
+
+  if (initialOptions[currSelection].length < 3000) {
+    setFullScaleDisabled(true);
+  } else {
+    setFullScaleDisabled(false);
+  }
   const pairRanking = calculateBondRanking(glycoBonds);
 
   const margin = {
@@ -107,9 +120,21 @@ function Visualization(props) {
     ? innerWidth + SPINE_START_POS
     : innerWidth + SPINE_START_POS;
 
+  const SCALED_SPINE_START_POS = SCALE_FACTOR * SPINE_START_POS;
+
   const xScale = scaleLinear()
     .domain([0, initialOptions[currSelection].length])
-    .range([SCALE_FACTOR * SPINE_START_POS, SPINE_WIDTH]);
+    .range([
+      fullScale ? 0 : SCALED_SPINE_START_POS,
+      fullScale ? initialOptions[currSelection].length : SPINE_WIDTH
+    ]);
+
+  // const xScale = scaleLinear()
+  //   .domain([0, initialOptions[currSelection].length])
+  //   .range([
+  //     SPINE_START_POS,
+  //     SPINE_START_POS + initialOptions[currSelection].length
+  //   ]);
 
   const bondHeight = idx => {
     const bHeight = SULFIDE_POS + SULFIDE_BOND_LENGTH * pairRanking[idx];
@@ -218,8 +243,6 @@ function Visualization(props) {
           .style('stroke', 'black')
           .style('fill', COLOR_PALLETE[idx % COLOR_PALLETE.length]);
 
-        console.log('TCL: idx -> xScale(el)', idx, xScale(el));
-
         const bond = g.append('line');
         bond
           .attr('x1', xScale(el))
@@ -253,7 +276,10 @@ function Visualization(props) {
   const attachSpine = g => {
     const spineBase = g.append('rect');
     spineBase
-      .attr('width', innerWidth)
+      .attr(
+        'width',
+        fullScale ? initialOptions[currSelection].length : innerWidth
+      )
       .attr('height', SPINE_HEIGHT)
       .attr('x', SCALE_FACTOR * SPINE_START_POS)
       .attr('y', innerHeight / 2)
@@ -294,9 +320,12 @@ function Visualization(props) {
   useEffect(() => {
     removeElements();
     renderVisualization();
-    if (scaleVisualization) {
+    if (scaleFactor !== 1) {
       document.getElementById('svg').style.marginLeft =
         innerWidth / scaleMap[scaleFactor];
+    } else if (fullScale) {
+      document.getElementById('svg').style.marginLeft =
+        0.95 * initialOptions[currSelection].length + 2 * margin.left;
     } else {
       document.getElementById('svg').style.marginLeft = 0;
     }
@@ -305,13 +334,18 @@ function Visualization(props) {
     showDisulfide,
     showGlyco,
     scaleVisualization,
-    scaleFactor
+    scaleFactor,
+    fullScale
   ]);
 
   const svg = Number.isInteger(currSelection) ? (
     <svg
       height={`${height}`}
-      width={`${width + margin.left}`}
+      width={`${
+        fullScale
+          ? initialOptions[currSelection].length + margin.left * 2
+          : width + margin.left
+      }`}
       ref={svgRef}
       id="svg"
       overflow="visible"
@@ -343,13 +377,15 @@ Visualization.propTypes = {
   width: PropTypes.number,
   currSelection: PropTypes.number.isRequired,
   scaleVisualization: PropTypes.bool,
-  scaleFactor: PropTypes.number
+  scaleFactor: PropTypes.number,
+  fullScale: PropTypes.bool
 };
 
 Visualization.defaultProps = {
   isLegendOpen: false,
   scaleVisualization: false,
   scaleFactor: 1,
+  fullScale: false,
   height: 500,
   width: 500
 };
