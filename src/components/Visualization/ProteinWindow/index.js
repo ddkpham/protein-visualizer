@@ -32,7 +32,13 @@ const useStyles = makeStyles({
 });
 
 function ProteinWindow(props) {
-  const { toggleGlyco, toggleSulfide, length } = props;
+  const {
+    toggleGlyco,
+    toggleSulfide,
+    length,
+    updateWindowStart,
+    updateWindowEnd
+  } = props;
   const [showGlyco, setShowGlyco] = useState(true);
   const [showSulfide, setShowSulfide] = useState(true);
   const classes = useStyles();
@@ -76,14 +82,14 @@ function ProteinWindow(props) {
               defaultValue={0}
               label="Start"
               variant="outlined"
-              onChange={ev => console.log(ev)}
+              onChange={ev => updateWindowStart(ev.target.value)}
             />
             <TextField
               id="outlined-basic"
               defaultValue={length}
               label="End"
               variant="outlined"
-              onChange={ev => console.log(ev)}
+              onChange={ev => updateWindowEnd(ev.target.value)}
             />
             <div className="button-visibility--on">
               <IconButton onClick={() => console.log('clicked')}>

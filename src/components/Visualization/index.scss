@@ -11,3 +11,9 @@
     font-size: 0.5rem;
   }
 }
+
+.windowSvg--wrapper {
+  position: relative;
+  top: -200px;
+  z-index: -1000;
+}
