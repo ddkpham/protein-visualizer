@@ -1,12 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Card,
-  CardContent,
-  Typography,
-  IconButton,
-  Button,
-  CardActions
-} from '@material-ui/core';
+import { Card, CardContent, Typography, IconButton } from '@material-ui/core';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import PropTypes from 'prop-types';
 
@@ -30,7 +23,15 @@ const useStyles = makeStyles({
     marginBottom: 12
   }
 });
-
+/**
+ *
+ * @param {Object} props
+ * @property {Object} glycoslation object containing glyco bond info
+ * @property {Object} disulfideBonds object containing sulfide bond info
+ * @property {func} toggleGlyco Function that toggles glyco bond visibility
+ * @property {func} toggleSulfide Function that toggles sulfide bond visibility
+ * @property {integar} length total length of protein structure
+ */
 function Legend(props) {
   const {
     glycoslation,
@@ -42,10 +43,9 @@ function Legend(props) {
   const [showGlyco, setShowGlyco] = useState(true);
   const [showSulfide, setShowSulfide] = useState(true);
   const classes = useStyles();
-  const bull = <span className={classes.bullet}>•</span>;
+
   const handleToggle = bond => {
     if (bond === 'sulfide') {
-      console.log('toggling sulfide');
       toggleSulfide(!showSulfide);
       setShowSulfide(!showSulfide);
     } else {
@@ -53,6 +53,7 @@ function Legend(props) {
       setShowGlyco(!showGlyco);
     }
   };
+
   return (
     <Card variant="outlined" classes={{ root: 'legend--wrapper' }}>
       <CardContent>
@@ -113,7 +114,8 @@ Legend.propTypes = {
   glycoslation: PropTypes.arrayOf(PropTypes.string).isRequired,
   disulfideBonds: PropTypes.arrayOf(PropTypes.string).isRequired,
   toggleGlyco: PropTypes.func,
-  toggleSulfide: PropTypes.func
+  toggleSulfide: PropTypes.func,
+  length: PropTypes.number.isRequired
 };
 
 Legend.defaultProps = {

@@ -1,17 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
-import {
-  select,
-  csv,
-  scaleLinear,
-  scaleBand,
-  axisLeft,
-  axisBottom,
-  selectAll
-} from 'd3';
+import { select, scaleLinear, selectAll } from 'd3';
 import PropTypes from 'prop-types';
 import constants from '../../static/constants';
 import Legend from '../Legend';
-import parser from '../../parser';
 
 import './index.scss';
 
@@ -69,36 +60,24 @@ function Visualization(props) {
     currSelection,
     isLegendOpen,
     initialOptions,
-    scaleVisualization: test,
     scaleFactor,
     fullScale,
     setFullScaleDisabled
   } = props;
-  const scaleVisualization = scaleFactor !== 1;
-  const SCALE_FACTOR = scaleVisualization ? scaleFactor : 1;
-  const width = initialWidth * SCALE_FACTOR;
+
+  const {
+    disulfideBonds,
+    glycoslation,
+    length: proteinLength
+  } = initialOptions[currSelection];
+
   const svgRef = useRef(null);
   const [showGlyco, setShowGlyco] = useState(true);
   const [showDisulfide, setShowDisulfide] = useState(true);
-  const [showScale, setShowScale] = useState(false);
-  const { disulfideBonds, glycoslation } = initialOptions[currSelection];
 
-  const glycoBonds = initialOptions[currSelection].disulfideBonds.map(pair => {
-    const bondPos = [];
-    const atoms = pair.split(' ');
-    atoms.forEach(el => {
-      const atom = parseInt(el, 10);
-      bondPos.push(atom);
-    });
-    return bondPos;
-  });
-
-  if (initialOptions[currSelection].length < 3000) {
-    setFullScaleDisabled(true);
-  } else {
-    setFullScaleDisabled(false);
-  }
-  const pairRanking = calculateBondRanking(glycoBonds);
+  const scaleVisualization = scaleFactor !== 1;
+  const SCALE_FACTOR = scaleVisualization ? scaleFactor : 1;
+  const width = initialWidth * SCALE_FACTOR;
 
   const margin = {
     top: height / 15,
@@ -111,30 +90,37 @@ function Visualization(props) {
   const SULFIDE_POS = innerHeight / 2 + SPINE_HEIGHT / 2;
   const SULFIDE_BOND_LENGTH = 40;
   const SULFIDE_ATOM_OFFSET = 20;
-
   const GLYCO_STEM_LENGTH = 60;
   const GLYCO_LINK_LENGTH = 10;
-  const SPINE_START_POS = 0.5 * margin.left;
+  const SPINE_START_POS = SCALE_FACTOR * 0.5 * margin.left;
 
   const SPINE_WIDTH = scaleVisualization
     ? innerWidth + SPINE_START_POS
     : innerWidth + SPINE_START_POS;
 
-  const SCALED_SPINE_START_POS = SCALE_FACTOR * SPINE_START_POS;
+  const glycoBonds = initialOptions[currSelection].disulfideBonds.map(pair => {
+    const bondPos = [];
+    const atoms = pair.split(' ');
+    atoms.forEach(el => {
+      const atom = parseInt(el, 10);
+      bondPos.push(atom);
+    });
+    return bondPos;
+  });
+
+  if (proteinLength < 3000) {
+    setFullScaleDisabled(true);
+  } else {
+    setFullScaleDisabled(false);
+  }
+  const pairRanking = calculateBondRanking(glycoBonds);
 
   const xScale = scaleLinear()
-    .domain([0, initialOptions[currSelection].length])
+    .domain([0, proteinLength])
     .range([
-      fullScale ? 0 : SCALED_SPINE_START_POS,
-      fullScale ? initialOptions[currSelection].length : SPINE_WIDTH
+      fullScale ? 0 : SPINE_START_POS,
+      fullScale ? proteinLength : SPINE_WIDTH
     ]);
-
-  // const xScale = scaleLinear()
-  //   .domain([0, initialOptions[currSelection].length])
-  //   .range([
-  //     SPINE_START_POS,
-  //     SPINE_START_POS + initialOptions[currSelection].length
-  //   ]);
 
   const bondHeight = idx => {
     const bHeight = SULFIDE_POS + SULFIDE_BOND_LENGTH * pairRanking[idx];
@@ -142,8 +128,6 @@ function Visualization(props) {
   };
 
   const attachGlycoBonds = g => {
-    const { glycoslation } = initialOptions[currSelection];
-
     const gBonds = glycoslation.map(el => parseInt(el, 10));
     gBonds.forEach(el => {
       const atom = g.append('text');
@@ -220,8 +204,6 @@ function Visualization(props) {
   };
 
   const attachSulfides = g => {
-    const { disulfideBonds } = initialOptions[currSelection];
-
     const bonds = disulfideBonds.map(pair => {
       const bondPos = [];
       const atoms = pair.split(' ');
@@ -276,12 +258,9 @@ function Visualization(props) {
   const attachSpine = g => {
     const spineBase = g.append('rect');
     spineBase
-      .attr(
-        'width',
-        fullScale ? initialOptions[currSelection].length : innerWidth
-      )
+      .attr('width', fullScale ? proteinLength : innerWidth)
       .attr('height', SPINE_HEIGHT)
-      .attr('x', SCALE_FACTOR * SPINE_START_POS)
+      .attr('x', SPINE_START_POS)
       .attr('y', innerHeight / 2)
       .style('fill', 'white')
       .style('stroke', 'black');
@@ -289,7 +268,7 @@ function Visualization(props) {
 
   const attachNTerminus = g => {
     const NTerm = g.append('text');
-    NTerm.attr('dx', SCALE_FACTOR * SPINE_START_POS - 50)
+    NTerm.attr('dx', SPINE_START_POS - 50)
       .attr('dy', innerHeight / 2 + 20)
       .text(() => 'NH2--');
   };
@@ -309,6 +288,7 @@ function Visualization(props) {
     }
     attachNTerminus(g);
   };
+
   const removeElements = () => {
     const svgEls = ['text', 'line', 'circle', 'rect'];
     svgEls.forEach(el => {
@@ -325,7 +305,7 @@ function Visualization(props) {
         innerWidth / scaleMap[scaleFactor];
     } else if (fullScale) {
       document.getElementById('svg').style.marginLeft =
-        0.95 * initialOptions[currSelection].length + 2 * margin.left;
+        0.95 * proteinLength + 2 * margin.left;
     } else {
       document.getElementById('svg').style.marginLeft = 0;
     }
@@ -342,9 +322,7 @@ function Visualization(props) {
     <svg
       height={`${height}`}
       width={`${
-        fullScale
-          ? initialOptions[currSelection].length + margin.left * 2
-          : width + margin.left
+        fullScale ? proteinLength + margin.left * 2 : width + margin.left
       }`}
       ref={svgRef}
       id="svg"
@@ -362,7 +340,7 @@ function Visualization(props) {
           disulfideBonds={disulfideBonds}
           toggleGlyco={setShowGlyco}
           toggleSulfide={setShowDisulfide}
-          length={initialOptions[currSelection].length}
+          length={proteinLength}
         />
       ) : null}
       {svg}
@@ -376,14 +354,14 @@ Visualization.propTypes = {
   height: PropTypes.number,
   width: PropTypes.number,
   currSelection: PropTypes.number.isRequired,
-  scaleVisualization: PropTypes.bool,
   scaleFactor: PropTypes.number,
-  fullScale: PropTypes.bool
+  fullScale: PropTypes.bool,
+  setFullScaleDisabled: PropTypes.func
 };
 
 Visualization.defaultProps = {
   isLegendOpen: false,
-  scaleVisualization: false,
+  setFullScaleDisabled: () => {},
   scaleFactor: 1,
   fullScale: false,
   height: 500,

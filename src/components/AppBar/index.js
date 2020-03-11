@@ -8,7 +8,6 @@ import {
   Toolbar,
   Tooltip
 } from '@material-ui/core';
-import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuIcon from '@material-ui/icons/Menu';
 import LinearScaleIcon from '@material-ui/icons/LinearScale';
 import { makeStyles } from '@material-ui/core/styles';
@@ -152,12 +151,17 @@ function CustomAppBar(props) {
 CustomAppBar.propTypes = {
   toggleLegend: PropTypes.bool.isRequired,
   scaleVisualization: PropTypes.func,
-  setScaleFactor: PropTypes.func
+  setScaleFactor: PropTypes.func,
+  toggleFullScale: PropTypes.func.isRequired,
+  disableFullScale: PropTypes.bool,
+  fullScale: PropTypes.bool
 };
 
 CustomAppBar.defaultProps = {
   scaleVisualization: () => {},
-  setScaleFactor: () => {}
+  setScaleFactor: () => {},
+  disableFullScale: false,
+  fullScale: false
 };
 
 export default CustomAppBar;

@@ -1,0 +1,40 @@
+.window {
+  &--wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    top: -100px;
+  }
+
+  &--display {
+    width: 250px;
+  }
+
+  &--menuItem {
+    display: flex;
+  }
+}
+
+.button-visibility--off {
+  position: relative;
+  bottom: 11px;
+  left: 10px;
+  .MuiIconButton-root {
+    color: #cb2d39;
+  }
+}
+
+.button-visibility--on {
+  position: relative;
+  bottom: 11px;
+  left: 10px;
+  .MuiIconButton-root {
+    color: #004d00;
+  }
+}
+
+.bold-text {
+  font-weight: bold;
+  margin-left: 7px;
+}
