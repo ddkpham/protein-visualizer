@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/protein-visualizer/precache-manifest.4d3cf5db03ada2fd67a1e766271e7961.js"
+  "/protein-visualizer/precache-manifest.210be729c049ca1c051d517937921c49.js"
 );
 
 self.addEventListener('message', (event) => {
