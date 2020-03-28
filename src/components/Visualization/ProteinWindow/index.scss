@@ -9,10 +9,12 @@
 
   &--display {
     width: 250px;
+    background-color: #f8f8ff;
   }
 
   &--menuItem {
     display: flex;
+    margin-bottom: 15px;
   }
 }
 

@@ -3,11 +3,17 @@
     position: fixed;
     top: 100px;
     left: 30px;
-    width: 250px;
+    width: 280px;
+    background-color: #f8f8ff;
   }
 
   &--menuItem {
     display: flex;
+  }
+
+  &--header {
+    width: max-content;
+    margin-bottom: 20px;
   }
 }
 

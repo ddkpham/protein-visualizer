@@ -3,6 +3,7 @@ import { StylesProvider } from '@material-ui/core';
 import Dropdown from './components/Dropdown';
 import Visualization from './components/Visualization';
 import CustomAppBar from './components/AppBar';
+import Introduction from './components/Introduction';
 import './App.scss';
 import parser from './parser';
 
@@ -12,6 +13,7 @@ const { innerWidth, innerHeight } = window;
 
 function App() {
   const [currSelection, updateSelection] = useState(null);
+  const [showIntro, setShowIntro] = useState(true);
   const [scaleVisualization, setScaleVisualization] = useState(false);
   const [isLegendOpen, setLegendState] = useState(true);
   const [proteinOpts, setProteinOpts] = useState([]);
@@ -33,7 +35,11 @@ function App() {
 
   const updateSel = index => {
     updateSelection(null);
+    setShowIntro(false);
     setTimeout(() => updateSelection(index), 500);
+    if (!Number.isInteger(index)) {
+      setShowIntro(true);
+    }
   };
 
   const toggleLegend = () => {
@@ -43,6 +49,8 @@ function App() {
   const toggleFullScale = () => {
     setFullScale(!fullScale);
   };
+
+  const intro = showIntro ? <Introduction /> : null;
 
   return (
     <StylesProvider injectFirst>
@@ -72,7 +80,7 @@ function App() {
             setFullScaleDisabled={setFullScaleDisabled}
           />
         ) : (
-          <div className="App-canvas" />
+          <div>{intro}</div>
         )}
       </div>
     </StylesProvider>

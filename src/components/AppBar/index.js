@@ -88,7 +88,7 @@ function CustomAppBar(props) {
           Sun Lab
         </Typography>
         <div>
-          <Tooltip title="Increase Scaling Ratio">
+          <Tooltip title="Increase Scaling Factor">
             <IconButton
               aria-label="account of current user"
               aria-controls="menu-appbar"

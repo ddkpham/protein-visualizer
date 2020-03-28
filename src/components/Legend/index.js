@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { Card, CardContent, Typography, IconButton } from '@material-ui/core';
+import {
+  Card,
+  CardContent,
+  Typography,
+  IconButton,
+  Tooltip
+} from '@material-ui/core';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import PropTypes from 'prop-types';
 
@@ -16,8 +22,11 @@ const useStyles = makeStyles({
     transform: 'scale(0.8)'
   },
   title: {
-    fontSize: 18,
-    textDecoration: 'underline'
+    fontSize: 20,
+    textDecoration: 'none',
+    color: '#cb2d39',
+    fontWeight: 'bold',
+    marginBottom: '15px'
   },
   pos: {
     marginBottom: 12
@@ -55,15 +64,18 @@ function Legend(props) {
   };
 
   return (
-    <Card variant="outlined" classes={{ root: 'legend--wrapper' }}>
+    <Card variant="outlined" raised classes={{ root: 'legend--wrapper' }}>
       <CardContent>
-        <Typography
-          className={classes.title}
-          color="textSecondary"
-          gutterBottom
-        >
-          Legend
-        </Typography>
+        <div className="legend--header">
+          <Typography
+            className={classes.title}
+            color="textSecondary"
+            gutterBottom
+            display="inline"
+          >
+            Legend
+          </Typography>
+        </div>
         <div className="legend--menuItem">
           <Typography>
             Total Glyco Bonds:
@@ -72,13 +84,15 @@ function Legend(props) {
             </Typography>
           </Typography>
           <div className={`button-visibility${showGlyco ? '--on' : '--off'}`}>
-            <IconButton
-              aria-label="delete"
-              className={{ root: 'on' }}
-              onClick={() => handleToggle('glyco')}
-            >
-              <VisibilityIcon />
-            </IconButton>
+            <Tooltip title="toggle visibility" placement="right-end">
+              <IconButton
+                aria-label="delete"
+                className={{ root: 'on' }}
+                onClick={() => handleToggle('glyco')}
+              >
+                <VisibilityIcon />
+              </IconButton>
+            </Tooltip>
           </div>
         </div>
         <div className="legend--menuItem">
@@ -89,12 +103,14 @@ function Legend(props) {
             </Typography>
           </Typography>
           <div className={`button-visibility${showSulfide ? '--on' : '--off'}`}>
-            <IconButton
-              aria-label="delete"
-              onClick={() => handleToggle('sulfide')}
-            >
-              <VisibilityIcon />
-            </IconButton>
+            <Tooltip title="toggle visibility" placement="right-end">
+              <IconButton
+                aria-label="delete"
+                onClick={() => handleToggle('sulfide')}
+              >
+                <VisibilityIcon />
+              </IconButton>
+            </Tooltip>
           </div>
         </div>
         <div className="legend--menuItem">

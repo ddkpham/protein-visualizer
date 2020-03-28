@@ -12,24 +12,6 @@ const SPINE_HEIGHT = 30;
 
 const { COLOR_PALLETE } = constants;
 
-const scaleMap = {
-  1: 1,
-  2: 2.5,
-  3: 2,
-  4: 1.9,
-  5: 2,
-  6: 2.2,
-  7: 2.5,
-  8: 2.9,
-  9: 3.6,
-  10: 4.6,
-  11: 6.8,
-  12: 12,
-  13: 59,
-  14: -15,
-  15: -7
-};
-
 const calculateBondRanking = array => {
   const pairRanking = [];
   array.forEach((pair, idx) => {
@@ -42,7 +24,7 @@ const calculateBondRanking = array => {
           total += 1;
         }
         if (low < currLow && high > currLow && high < currHigh) {
-          total += 0.7;
+          total += 0.55;
         }
         if (low > currLow && low < currHigh && high > currHigh) {
           total += 0.75;
@@ -72,6 +54,8 @@ function Visualization(props) {
     length: proteinLength
   } = initialOptions[currSelection];
 
+  console.log('Visualization -> proteinLength', proteinLength);
+
   const svgRef = useRef(null);
   const windowSvgRef = useRef(null);
   const [windowPos, setWindowPos] = useState({ start: 0, end: proteinLength });
@@ -81,30 +65,26 @@ function Visualization(props) {
   const [showDisulfide, setShowDisulfide] = useState(true);
 
   const scaleVisualization = scaleFactor !== 1;
-  const SCALE_FACTOR = scaleVisualization ? scaleFactor : 1;
-  const width = initialWidth * SCALE_FACTOR;
+  const scaledWidth = initialWidth * scaleFactor;
 
   const margin = {
     top: height / 15,
-    right: width / 15,
+    right: initialWidth / 15,
     bottom: height / 15,
-    left: width / 15
+    left: initialWidth / 15
   };
-  const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
   const SULFIDE_POS = innerHeight / 2 + SPINE_HEIGHT / 2;
   const SULFIDE_BOND_LENGTH = 40;
   const SULFIDE_ATOM_OFFSET = 20;
   const GLYCO_STEM_LENGTH = 60;
   const GLYCO_LINK_LENGTH = 10;
-  const SPINE_START_POS = SCALE_FACTOR * 0.5 * margin.left;
-  const WINDOW_SPINE_START_POS = (0.5 * initialWidth) / 15;
+  const SPINE_START_POS = 30;
+  const WINDOW_SPINE_START_POS = 0.1 * margin.left;
 
-  const SPINE_WIDTH = scaleVisualization
-    ? innerWidth + SPINE_START_POS
-    : innerWidth + SPINE_START_POS;
+  const SPINE_WIDTH = scaledWidth - scaleFactor * 2 * margin.left;
 
-  const WINDOW_SPINE_WIDTH = initialWidth - (2 * initialWidth) / 15;
+  const WINDOW_SPINE_WIDTH = initialWidth - 2 * margin.left;
 
   const glycoBonds = initialOptions[currSelection].disulfideBonds.map(pair => {
     const bondPos = [];
@@ -117,11 +97,11 @@ function Visualization(props) {
   });
 
   const updateWindowStart = newStart => {
-    setWindowPos({ ...windowPos, start: newStart });
+    setWindowPos({ ...windowPos, start: parseInt(newStart, 10) });
   };
 
   const updateWindowEnd = newEnd => {
-    setWindowPos({ ...windowPos, end: newEnd });
+    setWindowPos({ ...windowPos, end: parseInt(newEnd, 10) });
   };
 
   if (proteinLength < 3000) {
@@ -157,7 +137,7 @@ function Visualization(props) {
   const attachGlycoBonds = (g, isWindowView) => {
     let gBonds = glycoslation.map(el => parseInt(el, 10));
     if (isWindowView) {
-      gBonds = gBonds.filter(bond => bond >= windowStart && windowEnd);
+      gBonds = gBonds.filter(bond => bond >= windowStart && bond <= windowEnd);
     }
     const scale = isWindowView ? windowScale : xScale;
     gBonds.forEach(el => {
@@ -251,6 +231,109 @@ function Visualization(props) {
         const [x, y] = bond;
         return x >= windowStart && y <= windowEnd;
       });
+
+      // attach bonds that arent fully in window
+      // 1. Bonds that cut off to the left
+
+      const leftBonds = disulfideBonds.filter(b => {
+        const [x, y] = b.split(' ');
+        const b1 = parseInt(x, 10);
+        const b2 = parseInt(y, 10);
+        return b1 < windowStart && b2 <= windowEnd && b2 > windowStart;
+      });
+
+      console.log('attachSulfides -> leftBonds', leftBonds);
+
+      leftBonds.forEach((pair, idx) => {
+        const [x, y] = pair.split(' ');
+        // attach sulfide
+        const atom = g.append('circle');
+        atom
+          .attr('cx', scale(y))
+          .attr('cy', SULFIDE_POS)
+          .attr('r', CIRCLE_RADIUS)
+          .style('stroke', 'black')
+          .style('fill', COLOR_PALLETE[idx % COLOR_PALLETE.length]);
+
+        // attach stem
+        const bond = g.append('line');
+        bond
+          .attr('x1', scale(y))
+          .attr('y1', SULFIDE_POS + 20)
+          .attr('x2', scale(y))
+          .attr('y2', bondHeight(idx))
+          .style('stroke', 'black');
+
+        const sulfide = g.append('text');
+        sulfide
+          .attr('dx', scale(y) - 5)
+          .attr('dy', bondHeight(idx) + SULFIDE_ATOM_OFFSET)
+          .text(() => 'S');
+
+        const pos = g.append('text');
+        pos
+          .attr('dx', scale(y) + 4)
+          .attr('dy', bondHeight(idx) + SULFIDE_ATOM_OFFSET + 5)
+          .text(() => `${y}`)
+          .attr('class', 'sulfide-labels--pos');
+
+        const link = g.append('line');
+        link
+          .attr('x1', WINDOW_SPINE_START_POS)
+          .attr('y1', bondHeight(idx))
+          .attr('x2', scale(y))
+          .attr('y2', bondHeight(idx))
+          .style('stroke', 'black');
+      });
+
+      const rightBonds = disulfideBonds.filter(b => {
+        const [x, y] = b.split(' ');
+        const b1 = parseInt(x, 10);
+        const b2 = parseInt(y, 10);
+        return b1 > windowStart && b1 <= windowEnd && b2 > windowEnd;
+      });
+
+      rightBonds.forEach((pair, idx) => {
+        const [x, y] = pair.split(' ');
+        // attach sulfide
+        const atom = g.append('circle');
+        atom
+          .attr('cx', scale(x))
+          .attr('cy', SULFIDE_POS)
+          .attr('r', CIRCLE_RADIUS)
+          .style('stroke', 'black')
+          .style('fill', COLOR_PALLETE[idx % COLOR_PALLETE.length]);
+
+        // attach stem
+        const bond = g.append('line');
+        bond
+          .attr('x1', scale(x))
+          .attr('y1', SULFIDE_POS + 20)
+          .attr('x2', scale(x))
+          .attr('y2', bondHeight(idx))
+          .style('stroke', 'black');
+
+        const sulfide = g.append('text');
+        sulfide
+          .attr('dx', scale(x) - 5)
+          .attr('dy', bondHeight(idx) + SULFIDE_ATOM_OFFSET)
+          .text(() => 'S');
+
+        const pos = g.append('text');
+        pos
+          .attr('dx', scale(x) + 4)
+          .attr('dy', bondHeight(idx) + SULFIDE_ATOM_OFFSET + 5)
+          .text(() => `${x}`)
+          .attr('class', 'sulfide-labels--pos');
+
+        const link = g.append('line');
+        link
+          .attr('x1', scale(x))
+          .attr('y1', bondHeight(idx))
+          .attr('x2', scale(windowEnd))
+          .attr('y2', bondHeight(idx))
+          .style('stroke', 'black');
+      });
     }
 
     bonds.forEach((pair, idx) => {
@@ -296,21 +379,16 @@ function Visualization(props) {
 
   const attachSpine = (g, isWindowView) => {
     const spineBase = g.append('rect');
-    let spineWidth = fullScale ? proteinLength : innerWidth;
+    let spineWidth = fullScale ? proteinLength : SPINE_WIDTH;
+    const startPos = isWindowView ? WINDOW_SPINE_START_POS : SPINE_START_POS;
     if (isWindowView) {
       spineWidth = WINDOW_SPINE_WIDTH;
-      console.log('attachSpine -> innerWidth', innerWidth);
-      console.log('attachSpine -> spineWidth', spineWidth);
-      console.log('spine start pos', SPINE_START_POS);
-      console.log(
-        'attachSpine -> WINDOW_SPINE_START_POS',
-        WINDOW_SPINE_START_POS
-      );
     }
+
     spineBase
       .attr('width', spineWidth)
       .attr('height', SPINE_HEIGHT)
-      .attr('x', isWindowView ? WINDOW_SPINE_START_POS : SPINE_START_POS)
+      .attr('x', startPos)
       .attr('y', innerHeight / 2)
       .style('fill', 'white')
       .style('stroke', 'black');
@@ -358,12 +436,10 @@ function Visualization(props) {
     renderVisualization('#windowSvg', true);
     if (scaleFactor !== 1) {
       document.getElementById('svg').style.marginLeft =
-        innerWidth / scaleMap[scaleFactor];
-      // document.getElementById('windowSvg').style.marginLeft =
-      //   -WINDOW_SPINE_WIDTH / scaleMap[scaleFactor];
+        (scaleFactor - 1) * window.innerWidth;
     } else if (fullScale) {
-      document.getElementById('svg').style.marginLeft =
-        0.95 * proteinLength + 2 * margin.left;
+      document.getElementById('svg').style.marginLeft = 0;
+      // 0.95 * proteinLength + 2 * margin.left;
     } else {
       document.getElementById('svg').style.marginLeft = 0;
     }
@@ -378,33 +454,13 @@ function Visualization(props) {
     windowEnd
   ]);
 
-  // useEffect(() => {
-  //   removeElements();
-  //   renderVisualization('#svg');
-  //   renderVisualization('#windowSvg', true);
-  //   if (scaleFactor !== 1) {
-  //     document.getElementById('svg').style.marginLeft =
-  //       innerWidth / scaleMap[scaleFactor];
-  //   } else if (fullScale) {
-  //     document.getElementById('svg').style.marginLeft =
-  //       0.95 * proteinLength + 2 * margin.left;
-  //   } else {
-  //     document.getElementById('svg').style.marginLeft = 0;
-  //   }
-  // }, [
-  //   windowSvgRef.current,
-  //   windowStart,
-  //   windowEnd,
-  //   scaleVisualization,
-  //   scaleFactor,
-  //   fullScale
-  // ]);
-
   const svg = Number.isInteger(currSelection) ? (
     <svg
       height={`${height}`}
       width={`${
-        fullScale ? proteinLength + margin.left * 2 : width + margin.left
+        fullScale
+          ? proteinLength + margin.left * 2
+          : window.innerWidth * scaleFactor
       }`}
       ref={svgRef}
       id="svg"

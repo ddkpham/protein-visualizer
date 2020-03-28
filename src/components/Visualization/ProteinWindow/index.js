@@ -23,8 +23,11 @@ const useStyles = makeStyles({
     transform: 'scale(0.8)'
   },
   title: {
-    fontSize: 18,
-    textDecoration: 'underline'
+    fontSize: 20,
+    textDecoration: 'none',
+    color: '#cb2d39',
+    fontWeight: 'bold',
+    marginBottom: '10px'
   },
   pos: {
     marginBottom: 12
@@ -91,11 +94,12 @@ function ProteinWindow(props) {
               variant="outlined"
               onChange={ev => updateWindowEnd(ev.target.value)}
             />
-            <div className="button-visibility--on">
+            {/* TODO: Decide if we want users to set window view or if it should stay automatic */}
+            {/* <div className="button-visibility--on">
               <IconButton onClick={() => console.log('clicked')}>
                 <ZoomInIcon />
               </IconButton>
-            </div>
+            </div> */}
           </div>
         </CardContent>
       </Card>
