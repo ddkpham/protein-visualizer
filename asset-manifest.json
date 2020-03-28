@@ -1,23 +1,24 @@
 {
   "files": {
-    "main.css": "/protein-visualizer/static/css/main.49674b73.chunk.css",
-    "main.js": "/protein-visualizer/static/js/main.9eda2c7d.chunk.js",
-    "main.js.map": "/protein-visualizer/static/js/main.9eda2c7d.chunk.js.map",
+    "main.css": "/protein-visualizer/static/css/main.85a7a5b1.chunk.css",
+    "main.js": "/protein-visualizer/static/js/main.ea098357.chunk.js",
+    "main.js.map": "/protein-visualizer/static/js/main.ea098357.chunk.js.map",
     "runtime-main.js": "/protein-visualizer/static/js/runtime-main.80b41bf1.js",
     "runtime-main.js.map": "/protein-visualizer/static/js/runtime-main.80b41bf1.js.map",
-    "static/js/2.4b88a011.chunk.js": "/protein-visualizer/static/js/2.4b88a011.chunk.js",
-    "static/js/2.4b88a011.chunk.js.map": "/protein-visualizer/static/js/2.4b88a011.chunk.js.map",
+    "static/js/2.483c2793.chunk.js": "/protein-visualizer/static/js/2.483c2793.chunk.js",
+    "static/js/2.483c2793.chunk.js.map": "/protein-visualizer/static/js/2.483c2793.chunk.js.map",
     "index.html": "/protein-visualizer/index.html",
-    "precache-manifest.210be729c049ca1c051d517937921c49.js": "/protein-visualizer/precache-manifest.210be729c049ca1c051d517937921c49.js",
+    "precache-manifest.b25bdaeba94573959c2ed306fdf071bb.js": "/protein-visualizer/precache-manifest.b25bdaeba94573959c2ed306fdf071bb.js",
     "service-worker.js": "/protein-visualizer/service-worker.js",
-    "static/css/main.49674b73.chunk.css.map": "/protein-visualizer/static/css/main.49674b73.chunk.css.map",
-    "static/js/2.4b88a011.chunk.js.LICENSE": "/protein-visualizer/static/js/2.4b88a011.chunk.js.LICENSE",
-    "static/media/proteins.csv": "/protein-visualizer/static/media/proteins.2080b9bf.csv"
+    "static/css/main.85a7a5b1.chunk.css.map": "/protein-visualizer/static/css/main.85a7a5b1.chunk.css.map",
+    "static/js/2.483c2793.chunk.js.LICENSE": "/protein-visualizer/static/js/2.483c2793.chunk.js.LICENSE",
+    "static/media/proteins.csv": "/protein-visualizer/static/media/proteins.2080b9bf.csv",
+    "static/media/sunlab.png": "/protein-visualizer/static/media/sunlab.730a03c0.png"
   },
   "entrypoints": [
     "static/js/runtime-main.80b41bf1.js",
-    "static/js/2.4b88a011.chunk.js",
-    "static/css/main.49674b73.chunk.css",
-    "static/js/main.9eda2c7d.chunk.js"
+    "static/js/2.483c2793.chunk.js",
+    "static/css/main.85a7a5b1.chunk.css",
+    "static/js/main.ea098357.chunk.js"
   ]
 }
